@@ -1,15 +1,27 @@
 package com.example.quizlet.model
 
-data class Question(val id: String,
-                    val question: String,
-                    val answers: MutableList<Answer> = mutableListOf())
+import java.util.*
 
-data class Answer(val id: String,
-                  val text: String,
-                  val isCorrect: Boolean)
+data class Question(
+    val id: String,
+    val question: String,
+    val answers: MutableList<Answer> = mutableListOf()
+)
 
-data class StudentResult(val albumNumber: String,
-                         val choices: MutableList<StudentChoice> = mutableListOf())
+data class Answer(
+    val id: String,
+    val text: String,
+    val correctOrNot: Boolean
+)
 
-data class StudentChoice(val questionId: String,
-                         val answers: MutableList<String> = mutableListOf())
+data class StudentResult(
+    val albumNumber: String,
+    val choices: MutableList<StudentChoice>,
+    val result: String
+)
+
+data class StudentChoice(
+    val questionId: String,
+    val answers: MutableList<String>
+)
+

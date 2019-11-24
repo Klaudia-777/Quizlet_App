@@ -4,6 +4,8 @@ import com.example.quizlet.model.Question
 import com.example.quizlet.model.StudentResult
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -22,8 +24,13 @@ interface QuizletRmoteService {
 
     companion object {
         fun get(): QuizletRmoteService {
+            val logger = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+            val client = OkHttpClient.Builder()
+                .addInterceptor(logger)
+                .build()
             val retrofit = Retrofit.Builder()
-                .baseUrl("http://192.168.0.194:8080/")
+                .baseUrl("https://intense-taiga-38112.herokuapp.com/")
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build()

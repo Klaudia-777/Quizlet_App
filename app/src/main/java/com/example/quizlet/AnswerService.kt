@@ -11,7 +11,7 @@ class AnswerService(val allTheQuestions: List<Question>) {
 
     fun getAllTheCorrectAnswersFromQuestions(): MutableList<Answer> {
         val correct =allTheQuestions.flatMap{ it.answers }
-        val correctAnswers=correct.map{it}.filter { it.isCorrect }.toMutableList()
+        val correctAnswers=correct.map{it}.filter { it.correctOrNot }.toMutableList()
         return correctAnswers
     }
 

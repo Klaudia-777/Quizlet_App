@@ -8,10 +8,6 @@ import com.example.quizlet.model.ContextHolder
 import kotlinx.android.synthetic.main.activity_submit_test.*
 
 class SubmitTestActivity : AppCompatActivity() {
-    var answerService = AnswerService(ContextHolder.questions)
-    var studentResult = ContextHolder.studentResult
-    var numberOfCorrectAnswers: Int = 0
-    private var numberOfQuestions: Int = ContextHolder.questions.size
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,18 +15,8 @@ class SubmitTestActivity : AppCompatActivity() {
         setUI()
     }
 
-    fun getNofCorrectAnswers() {
-        studentResult.choices.flatMap { it.answers }.map { answerService.incrementIfIdsAreEqual(it) }
-        numberOfCorrectAnswers = AnswerService.noCorrectAnswers
-    }
-
-    fun getResult(): CharSequence {
-        getNofCorrectAnswers()
-        return ((numberOfCorrectAnswers.toDouble() / numberOfQuestions.toDouble()) * 100).toString() + "%"
-    }
-
     fun setUI() {
-        scoreTextView.text = getResult()
+        scoreTextView.text = ContextHolder.result
     }
 
     @Override

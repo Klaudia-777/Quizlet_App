@@ -6,10 +6,12 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.widget.CheckBox
+import com.example.quizlet.activity.QuizletRmoteService
 import com.example.quizlet.model.ContextHolder
 import com.example.quizlet.model.Question
 import com.example.quizlet.model.StudentChoice
 import com.example.quizlet.model.StudentResult
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_question.*
 
 class QuestionActivity : AppCompatActivity() {
@@ -17,6 +19,12 @@ class QuestionActivity : AppCompatActivity() {
     lateinit var questionsList: List<Question>
     val studentChoices: MutableList<StudentChoice> = mutableListOf()
     lateinit var currentQuestion: Question
+    lateinit var remoteService: QuizletRmoteService
+    val answerService = AnswerService(ContextHolder.questions)
+    var numberOfCorrectAnswers: Int = 0
+    private var numberOfQuestions: Int = ContextHolder.questions.size
+    var isSubmitted = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +34,22 @@ class QuestionActivity : AppCompatActivity() {
         finishTestButton.setOnClickListener { onFinishButtonClicked() }
         questionsList = ContextHolder.questions
         setUI(questionsList[0])
+        remoteService = QuizletRmoteService.get()
+    }
+
+
+    fun List<StudentChoice>.getNofCorrectAnswers() {
+        flatMap { it.answers }
+            .map { answerService.incrementIfIdsAreEqual(it) }
+        numberOfCorrectAnswers = AnswerService.noCorrectAnswers
+    }
+
+    fun List<StudentChoice>.getResult(): String {
+        getNofCorrectAnswers()
+        val result =
+            ((numberOfCorrectAnswers.toDouble() / numberOfQuestions.toDouble()) * 100).toString() + "%"
+        ContextHolder.result = result
+        return result
     }
 
     fun onPreviousButton() {
@@ -51,10 +75,21 @@ class QuestionActivity : AppCompatActivity() {
     }
 
     fun onFinishButtonClicked() {
-        saveCurrentChoice()
-        ContextHolder.studentResult =
-            StudentResult(albumNumber = ContextHolder.albumNumber, choices = studentChoices)
-        setFinishUI()
+        if (!isSubmitted) {
+            saveCurrentChoice()
+            ContextHolder.studentResult =
+                StudentResult(
+                    albumNumber = ContextHolder.albumNumber,
+                    choices = studentChoices,
+                    result = studentChoices.getResult()
+                )
+
+            remoteService.sendResult(ContextHolder.studentResult, ContextHolder.testId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSuccess { setFinishUI() }
+                .subscribe()
+            isSubmitted = true
+        }
     }
 
     fun saveCurrentChoice() {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Quizlet</string>
+    <string name="app_name">QuizApp</string>
     <string name="textview">TextView</string>
     <string name="tw_j_wynik">Twój wynik:</string>
     <string name="result">RESULT</string>

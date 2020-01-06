@@ -13,9 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".QuestionActivity" />
-        <activity android:name=".SubmitTestActivity"/>
-        <activity android:name=".StudentLoginActivity">
+        <activity android:name=".QuestionActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".SubmitTestActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".StudentLoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

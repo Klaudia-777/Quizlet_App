@@ -21,7 +21,6 @@ class QuestionActivity : AppCompatActivity() {
     lateinit var currentQuestion: Question
     lateinit var remoteService: QuizletRmoteService
     val answerService = AnswerService(ContextHolder.questions)
-    var numberOfCorrectAnswers: Int = 0
     private var numberOfQuestions: Int = ContextHolder.questions.size
     var isSubmitted = false
 
@@ -38,14 +37,11 @@ class QuestionActivity : AppCompatActivity() {
     }
 
 
-    fun List<StudentChoice>.getNofCorrectAnswers() {
-        flatMap { it.answers }
-            .map { answerService.incrementIfIdsAreEqual(it) }
-        numberOfCorrectAnswers = AnswerService.noCorrectAnswers
-    }
+    fun List<StudentChoice>.getNofCorrectAnswers()  = map { answerService.getPointsFromAnswers(it.answers,it.questionId) }
+        .sum()
 
     fun List<StudentChoice>.getResult(): String {
-        getNofCorrectAnswers()
+        val numberOfCorrectAnswers = getNofCorrectAnswers()
         val result =
             ((numberOfCorrectAnswers.toDouble() / numberOfQuestions.toDouble()) * 100).toString() + "%"
         ContextHolder.result = result

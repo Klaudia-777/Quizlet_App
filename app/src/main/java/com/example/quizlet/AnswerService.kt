@@ -5,26 +5,21 @@ import com.example.quizlet.model.Question
 
 class AnswerService(val allTheQuestions: List<Question>) {
 
-    companion object {
-        var noCorrectAnswers = 0
-    }
 
-    fun getAllTheCorrectAnswersFromQuestions(): MutableList<Answer> {
-        val correct =allTheQuestions.flatMap{ it.answers }
-        val correctAnswers=correct.map{it}.filter { it.correctOrNot }.toMutableList()
+    private fun getAllTheCorrectAnswersFromQuestions(questionId: String): MutableList<Answer> {
+        val correct = allTheQuestions.filter { it.id==questionId }.flatMap { it.answers }
+        val correctAnswers = correct.map { it }.filter { it.correctOrNot }.toMutableList()
         return correctAnswers
     }
 
-    fun getAnswerIdForAllTheAnswers(): List<String> {
-        val answerObjects = getAllTheCorrectAnswersFromQuestions()
+    private fun getAnswerIdForAllTheAnswers(questionId: String): List<String> {
+        val answerObjects = getAllTheCorrectAnswersFromQuestions(questionId)
         return answerObjects.map { it.id }
     }
 
-    fun incrementIfIdsAreEqual(id: String) {
-        val allAnswerIds = getAnswerIdForAllTheAnswers()
-        if (allAnswerIds.contains(id)) {
-            noCorrectAnswers += 1
-        }
+    fun getPointsFromAnswers(ids: List<String>, questionId: String): Int {
+        val allAnswerIds = getAnswerIdForAllTheAnswers(questionId)
+        return if (ids == allAnswerIds) 1 else 0
     }
 
 }
